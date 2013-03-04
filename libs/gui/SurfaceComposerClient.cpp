@@ -575,6 +575,28 @@ status_t SurfaceComposerClient::getDisplayInfo(
     return ComposerService::getComposerService()->getDisplayInfo(display, info);
 }
 
+  // HACK: Backward compatibility for adreno drivers
+status_t SurfaceComposerClient::getDisplayInfo(
+	 int32_t displayId, DisplayInfo* info)
+{
+    return getDisplayInfo(getBuiltInDisplay(displayId), info);
+}
+
+  // HACK: Backward compatibility for camera
+ssize_t SurfaceComposerClient::getDisplayWidth(int32_t displayId)
+{
+  DisplayInfo info;
+  getDisplayInfo(displayId, &info);
+  return info.w;
+}
+
+ssize_t SurfaceComposerClient::getDisplayHeight(int32_t displayId)
+{
+  DisplayInfo info;
+  getDisplayInfo(displayId, &info);
+  return info.h;
+}
+
 void SurfaceComposerClient::blankDisplay(const sp<IBinder>& token) {
     ComposerService::getComposerService()->blank(token);
 }
@@ -587,6 +609,11 @@ void SurfaceComposerClient::unblankDisplay(const sp<IBinder>& token) {
 
 ScreenshotClient::ScreenshotClient()
     : mWidth(0), mHeight(0), mFormat(PIXEL_FORMAT_NONE) {
+}
+
+status_t ScreenshotClient::update() {
+  sp<ISurfaceComposer> sm(ComposerService::getComposerService());
+  return update(sm->getBuiltInDisplay(0));
 }
 
 status_t ScreenshotClient::update(const sp<IBinder>& display) {

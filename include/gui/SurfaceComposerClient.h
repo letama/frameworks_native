@@ -67,6 +67,13 @@ public:
     // Get information about a display
     static status_t getDisplayInfo(const sp<IBinder>& display, DisplayInfo* info);
 
+    // PL Hack for adreno compatibility
+    static status_t getDisplayInfo(int32_t displayId, DisplayInfo* info);
+
+    // PL Hack for camera compatibility
+    static ssize_t getDisplayWidth(int32_t displayId);
+    static ssize_t getDisplayHeight(int32_t displayId);
+
     /* triggers screen off and waits for it to complete */
     static void blankDisplay(const sp<IBinder>& display);
 
@@ -169,6 +176,9 @@ public:
     status_t update(const sp<IBinder>& display,
             uint32_t reqWidth, uint32_t reqHeight,
             uint32_t minLayerZ, uint32_t maxLayerZ);
+
+    // Hack for adreno compat
+    status_t update();
 
     // release memory occupied by the screenshot
     void release();
